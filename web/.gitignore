@@ -52,4 +52,4 @@ pnpm-lock.yaml
 .favorites.json
 .idea
 
-./app/components/base/icons/src
+/app/components/base/icons/src/

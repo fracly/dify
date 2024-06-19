@@ -7,6 +7,7 @@
 }
 
 .background {
-  background-image: url('./assets/background.png');
+  background: url('./assets/background-fact.png') no-repeat bottom center,linear-gradient(180deg, #0057FF 28.53%, rgba(255, 255, 255, 0.33) 100%);
+  background-blend-mode: luminosity;
   background-size: cover;
 }

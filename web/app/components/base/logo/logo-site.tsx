@@ -6,12 +6,12 @@ type LogoSiteProps = {
 }
 
 const LogoSite: FC<LogoSiteProps> = ({
-  className,
-}) => {
+                                       className,
+                                     }) => {
   return (
     <img
       src='/logo/logo-site.png'
-      className={classNames('block w-auto h-10', className)}
+      className={classNames('block w-auto h-8', className)}
       alt='logo'
     />
   )

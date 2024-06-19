@@ -45,15 +45,14 @@ gtag('config', 'AW-11217955271"');
         </>
       )}
       <div className={cn(
-        style.background,
+        // style.background,
         'flex w-full min-h-screen',
-        'sm:p-4 lg:p-8',
-        'gap-x-20',
         'justify-center lg:justify-start',
       )}>
         <div className={
           cn(
-            'flex w-full flex-col bg-white shadow rounded-2xl shrink-0',
+            style.background,
+            'flex w-full flex-col bg-white shadow shrink-0',
             'space-between',
           )
         }>
@@ -74,8 +73,8 @@ gtag('config', 'AW-11217955271"');
           {!loading && !systemFeatures.sso_enforced_for_signin && (
             <>
               <Forms />
-              <div className='px-8 py-6 text-sm font-normal text-gray-500'>
-                © {new Date().getFullYear()} LangGenius, Inc. All rights reserved.
+              <div className='px-8 py-6 text-sm font-normal text-gray-500' style ={{textAlign: "center"}}>
+                合肥象形大数据提供支持
               </div>
             </>
           )}

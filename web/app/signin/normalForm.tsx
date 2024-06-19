@@ -2,15 +2,18 @@
 import React, { useEffect, useReducer, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useRouter } from 'next/navigation'
-import classNames from 'classnames'
 import useSWR from 'swr'
 import Link from 'next/link'
 import Toast from '../components/base/toast'
-import style from './page.module.css'
-import { IS_CE_EDITION, SUPPORT_MAIL_LOGIN, apiPrefix, emailRegex } from '@/config'
+import { IS_CE_EDITION, SUPPORT_MAIL_LOGIN, apiPrefix } from '@/config'
 import Button from '@/app/components/base/button'
 import { login, oauth } from '@/service/common'
-import { getPurifyHref } from '@/utils'
+import Checkbox from "@/app/components/base/checkbox"
+import { User01 } from '@/app/components/base/icons/src/vender/line/users'
+import { Lock01 } from "@/app/components/base/icons/src/vender/line/security"
+import { Eye, EyeClose } from "@/app/components/base/icons/src/vender/line/general"
+
+const validEmailReg = /^[\w\.-]+@([\w-]+\.)+[\w-]{2,}$/
 
 type IState = {
   formValid: boolean
@@ -76,8 +79,10 @@ const NormalForm = () => {
   const [password, setPassword] = useState('')
 
   const [isLoading, setIsLoading] = useState(false)
+  const [isRemember, setIsRemember] = useState(false)
+
   const handleEmailPasswordLogin = async () => {
-    if (!emailRegex.test(email)) {
+    if (!validEmailReg.test(email)) {
       Toast.notify({
         type: 'error',
         message: t('login.error.emailInValid'),
@@ -110,6 +115,7 @@ const NormalForm = () => {
     }
   }
 
+  function handleRememberChecked (){}
   const { data: github, error: github_error } = useSWR(state.github
     ? ({
       url: '/oauth/login/github',
@@ -142,107 +148,33 @@ const NormalForm = () => {
       window.location.href = google.redirect_url
   }, [google, google_error])
 
+  // @ts-ignore
   return (
     <>
-      <div className="w-full mx-auto">
-        <h2 className="text-[32px] font-bold text-gray-900">{t('login.pageTitle')}</h2>
-        <p className='mt-1 text-sm text-gray-600'>{t('login.welcome')}</p>
-      </div>
-
-      <div className="w-full mx-auto mt-8">
-        <div className="bg-white ">
-          {!useEmailLogin && (
-            <div className="flex flex-col gap-3 mt-6">
-              <div className='w-full'>
-                <a href={getPurifyHref(`${apiPrefix}/oauth/login/github`)}>
-                  <Button
-                    variant='default'
-                    disabled={isLoading}
-                    className='w-full hover:!bg-gray-50 !text-sm !font-medium'
-                  >
-                    <>
-                      <span className={
-                        classNames(
-                          style.githubIcon,
-                          'w-5 h-5 mr-2',
-                        )
-                      } />
-                      <span className="truncate text-gray-800">{t('login.withGitHub')}</span>
-                    </>
-                  </Button>
-                </a>
-              </div>
-              <div className='w-full'>
-                <a href={getPurifyHref(`${apiPrefix}/oauth/login/google`)}>
-                  <Button
-                    variant='default'
-                    disabled={isLoading}
-                    className='w-full hover:!bg-gray-50 !text-sm !font-medium'
-                  >
-                    <>
-                      <span className={
-                        classNames(
-                          style.googleIcon,
-                          'w-5 h-5 mr-2',
-                        )
-                      } />
-                      <span className="truncate text-gray-800">{t('login.withGoogle')}</span>
-                    </>
-                  </Button>
-                </a>
-              </div>
-            </div>
-          )}
-
+      <div className="w-full">
+        <div className="bg-white items-center rounded-xl shadow-lg">
           {
             useEmailLogin && <>
-              {/* <div className="relative mt-6">
-                <div className="absolute inset-0 flex items-center" aria-hidden="true">
-                  <div className="w-full border-t border-gray-300" />
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-2 text-gray-300 bg-white">OR</span>
-                </div>
-              </div> */}
-
+              <h1 className="font-bold text-xl p-6 text-center">欢迎登录</h1>
               <form onSubmit={() => { }}>
                 <div className='mb-5'>
-                  <label htmlFor="email" className="my-2 block text-sm font-medium text-gray-900">
-                    {t('login.email')}
-                  </label>
-                  <div className="mt-1">
+                  <div className="relative mt-1 mx-4">
                     <input
                       value={email}
                       onChange={e => setEmail(e.target.value)}
                       id="email"
                       type="email"
                       autoComplete="email"
-                      placeholder={t('login.emailPlaceholder') || ''}
-                      className={'appearance-none block w-full rounded-lg pl-[14px] px-3 py-2 border border-gray-200 hover:border-gray-300 hover:shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 placeholder-gray-400 caret-primary-600 sm:text-sm'}
+                      placeholder={t('login.account') || ''}
+                      className={'appearance-none block w-full rounded-sm pl-[32px] px-3 py-2 border border-gray-200 hover:border-gray-300 hover:shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 placeholder-gray-400 caret-primary-600 sm:text-sm pl-10'}
                     />
+                    <div className="absolute inset-y-0 left-2 flex items-center pr-3">
+                      <User01 className='h-4 w-4 text-gray-700' />
+                    </div>
                   </div>
                 </div>
-
                 <div className='mb-4'>
-                  <label htmlFor="password" className="my-2 flex items-center justify-between text-sm font-medium text-gray-900">
-                    <span>{t('login.password')}</span>
-                    {/* <Tooltip
-                      selector='forget-password'
-                      htmlContent={
-                        <div>
-                          <div className='font-medium'>{t('login.forget')}</div>
-                          <div className='font-medium text-gray-500'>
-                            <code>
-                              sudo rm -rf /
-                            </code>
-                          </div>
-                        </div>
-                      }
-                    >
-                      <span className='cursor-pointer text-primary-600'>{t('login.forget')}</span>
-                    </Tooltip> */}
-                  </label>
-                  <div className="relative mt-1">
+                  <div className="relative mt-1 mx-4">
                     <input
                       id="password"
                       value={password}
@@ -253,35 +185,51 @@ const NormalForm = () => {
                       }}
                       type={showPassword ? 'text' : 'password'}
                       autoComplete="current-password"
-                      placeholder={t('login.passwordPlaceholder') || ''}
-                      className={'appearance-none block w-full rounded-lg pl-[14px] px-3 py-2 border border-gray-200 hover:border-gray-300 hover:shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 placeholder-gray-400 caret-primary-600 sm:text-sm pr-10'}
+                      placeholder={t('login.password') || ''}
+                      className={'appearance-none block w-full rounded-sm pl-[32px] px-3 py-2 border border-gray-200 hover:border-gray-300 hover:shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 placeholder-gray-400 caret-primary-600 sm:text-sm pr-10'}
                     />
+                    <div className="absolute inset-y-0 left-2 flex items-center pr-3">
+                      <Lock01 className='h-4 w-4 text-gray-700' />
+                    </div>
                     <div className="absolute inset-y-0 right-0 flex items-center pr-3">
-                      <button
-                        type="button"
+                      <div
                         onClick={() => setShowPassword(!showPassword)}
-                        className="text-gray-400 hover:text-gray-500 focus:outline-none focus:text-gray-500"
-                      >
-                        {showPassword ? '👀' : '😝'}
-                      </button>
+                        className="text-gray-400 hover:text-gray-500 focus:outline-none focus:text-gray-500 hover:cursor-pointer">
+                        {showPassword ? <Eye className='h-4 w-4 text-gray-700' /> :
+                          <EyeClose className='h-4 w-4 text-gray-700' /> }
+                      </div>
                     </div>
                   </div>
                 </div>
-
                 <div className='mb-2'>
-                  <Button
-                    tabIndex={0}
-                    variant='primary'
-                    onClick={handleEmailPasswordLogin}
-                    disabled={isLoading}
-                    className="w-full !fone-medium !text-sm"
-                  >{t('login.signBtn')}</Button>
+                  <div className="relative mt-1 mx-4 w-full">
+                    <Checkbox
+                      className='mt-2 hover:border-primary-500 hover:shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500'
+                      checked={isRemember}
+                      onCheck={handleRememberChecked}
+                    />
+                    <label className='absolute text-xs top-0 left-5'>{t('login.rememberMe')}</label>
+                    <Link
+                      className='absolute text-primary-600 text-xs right-8 top-0'
+                      href='/install'
+                    >{t('login.setAdminAccount')}</Link>
+                  </div>
+                </div>
+                <div className='mb-2'>
+                  <div className="relative mt-4 mx-4">
+                    <Button
+                      tabIndex={0}
+                      onClick={handleEmailPasswordLogin}
+                      disabled={isLoading}
+                      className="w-full bg-[#017BFF] !fone-medium !text-sm text-white"
+                    >{t('login.signBtn')}</Button>
+                  </div>
                 </div>
               </form>
             </>
           }
           {/*  agree to our Terms and Privacy Policy. */}
-          <div className="w-hull text-center block mt-2 text-xs text-gray-600">
+          <div className="w-hull text-center block mt-4 pb-6 text-xs text-gray-600">
             {t('login.tosDesc')}
             &nbsp;
             <Link
@@ -289,21 +237,10 @@ const NormalForm = () => {
               target='_blank' rel='noopener noreferrer'
               href='https://dify.ai/terms'
             >{t('login.tos')}</Link>
-            &nbsp;&&nbsp;
-            <Link
-              className='text-primary-600'
-              target='_blank' rel='noopener noreferrer'
-              href='https://dify.ai/privacy'
-            >{t('login.pp')}</Link>
           </div>
 
           {IS_CE_EDITION && <div className="w-hull text-center block mt-2 text-xs text-gray-600">
-            {t('login.goToInit')}
-            &nbsp;
-            <Link
-              className='text-primary-600'
-              href='/install'
-            >{t('login.setAdminAccount')}</Link>
+
           </div>}
 
         </div>
